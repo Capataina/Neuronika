@@ -17,9 +17,9 @@ export default function MasonryBoard() {
       w: 1, // Make each note take up 1/8 of the width
       h: 2,
       minW: 1,
-      maxW: 2,
+      maxW: 8,
       minH: 1,
-      maxH: 4,
+      maxH: 8,
     })),
   };
 

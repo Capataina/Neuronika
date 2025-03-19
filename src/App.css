@@ -43,13 +43,15 @@
   color: #888;
 }
 
-/* Add new layout styles */
+/* Update layout styles */
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 100vw;
   overflow-x: hidden;
+  background-color: #1E1E1E;
+  color: #E0E0E0;
 }
 
 .menu-container {
@@ -57,14 +59,15 @@
   padding: 0 10%;
   width: 100%;
   box-sizing: border-box;
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #ddd;
+  background-color: #1E1E1E;
+  border-bottom: 1px solid rgba(224, 224, 224, 0.1);
 }
 
 .board-container {
   height: 90vh;
-  padding: 0 10%;
+  padding: 10px 10%;
   width: 100%;
   box-sizing: border-box;
   overflow-y: auto;
+  background-color: #1E1E1E;
 }

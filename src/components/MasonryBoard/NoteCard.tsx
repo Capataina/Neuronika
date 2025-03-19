@@ -1,3 +1,5 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 interface NoteCardProps {
   title: string;
   content: string;
@@ -5,9 +7,13 @@ interface NoteCardProps {
 
 export default function NoteCard({ title, content }: NoteCardProps) {
   return (
-    <div className="h-full p-4 border rounded-lg shadow-sm bg-white overflow-auto">
-      <h2 className="text-lg font-semibold mb-2">{title}</h2>
-      <p className="text-gray-600 whitespace-pre-line">{content}</p>
-    </div>
+    <Card className="w-full h-full note-card rounded-lg">
+      <CardHeader className="note-card-header flex items-center justify-center">
+        <CardTitle className="truncate text-base">{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="note-card-content">
+        <p className="note-content">{content}</p>
+      </CardContent>
+    </Card>
   );
 }
