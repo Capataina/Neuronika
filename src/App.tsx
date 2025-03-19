@@ -3,14 +3,15 @@ import MenuBar from './components/MenuBar/MenuBar'
 import MasonryBoard from './components/MasonryBoard/MasonryBoard'
 
 function App() {
-
   return (
-    <>
-      <MenuBar></MenuBar>
-      <>
-        <MasonryBoard></MasonryBoard>
-      </>
-    </>
+    <div className="app-container">
+      <div className="menu-container">
+        <MenuBar />
+      </div>
+      <div className="board-container">
+        <MasonryBoard />
+      </div>
+    </div>
   )
 }
 
