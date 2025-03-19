@@ -14,154 +14,92 @@ interface LayoutItem {
 
 export function rearrangeLayout(notes: Note[], relativeSizes: { width: number; height: number }[]): LayoutItem[] {
   // Create a copy of notes and sizes to work with
-  const availableNotes = notes.map((note, index) => ({
+  const noteItems = notes.map((note, index) => ({
     note,
     width: relativeSizes[index].width,
     height: relativeSizes[index].height,
-    used: false
   }));
 
   const maxCols = 8;
-  const maxRows = 50;
+  const maxRows = 50; // Upper limit to prevent infinite recursion
+
+  // Create grid to track occupied cells
+  const grid: boolean[][] = Array(maxRows).fill(0).map(() => Array(maxCols).fill(false));
+
+  // Array to track which notes have been placed
+  const usedNotes = new Array(noteItems.length).fill(false);
+
+  // Final layout result
   const layout: LayoutItem[] = [];
 
-  // Track the current row we're filling
-  let currentRow = 0;
+  // Start the recursive placement from top-left
+  placeNotesWithBacktracking(grid, 0, 0, noteItems, usedNotes, layout, maxCols, maxRows);
 
-  // For each row, we'll attempt to fill it completely
-  while (availableNotes.some(item => !item.used) && currentRow < maxRows) {
-    let currentCol = 0;
-    let rowHeight = 0;
+  // Sort by position for cleaner display
+  layout.sort((a, b) => a.y - b.y || a.x - b.x);
 
-    // Keep trying to fill the current row until we can't add more notes
-    while (currentCol < maxCols) {
-      const remainingWidth = maxCols - currentCol;
-      if (remainingWidth <= 0) break;
+  return layout;
+}
 
-      // First, try to find notes that exactly fit the remaining space
-      const exactFits = availableNotes.filter(item =>
-        !item.used && item.width === remainingWidth
-      );
-
-      // If we have exact fits, randomly select one
-      if (exactFits.length > 0) {
-        const randomIndex = Math.floor(Math.random() * exactFits.length);
-        const selectedNote = exactFits[randomIndex];
-
-        // Add this note to the layout
-        layout.push({
-          i: selectedNote.note.id,
-          x: currentCol,
-          y: currentRow,
-          w: selectedNote.width,
-          h: selectedNote.height,
-          minW: 1,
-          maxW: 8,
-          minH: 1,
-          maxH: 8
-        });
-
-        // Update row information
-        rowHeight = Math.max(rowHeight, selectedNote.height);
-        selectedNote.used = true;
-        currentCol += selectedNote.width;
-        continue;
-      }
-
-      // If no exact fits, find all notes that could fit in the remaining space
-      const possibleFits = availableNotes.filter(item =>
-        !item.used && item.width <= remainingWidth
-      );
-
-      // If we have possible fits, randomly select one
-      if (possibleFits.length > 0) {
-        const randomIndex = Math.floor(Math.random() * possibleFits.length);
-        const selectedNote = possibleFits[randomIndex];
-
-        // Add this note to the layout
-        layout.push({
-          i: selectedNote.note.id,
-          x: currentCol,
-          y: currentRow,
-          w: selectedNote.width,
-          h: selectedNote.height,
-          minW: 1,
-          maxW: 8,
-          minH: 1,
-          maxH: 8
-        });
-
-        // Update row information
-        rowHeight = Math.max(rowHeight, selectedNote.height);
-        selectedNote.used = true;
-        currentCol += selectedNote.width;
-      } else {
-        // If no notes fit the remaining space, we need a new strategy
-        // Check if we've placed anything in this row
-        if (currentCol > 0) {
-          // Move to the next row
-          break;
-        } else {
-          // This is an empty row, and no available notes fit within the max width
-          // Try picking the smallest available note
-          const smallestNote = availableNotes
-            .filter(item => !item.used)
-            .sort((a, b) => a.width - b.width)[0];
-
-          if (smallestNote) {
-            // Add this note to the layout
-            layout.push({
-              i: smallestNote.note.id,
-              x: currentCol,
-              y: currentRow,
-              w: smallestNote.width,
-              h: smallestNote.height,
-              minW: 1,
-              maxW: 8,
-              minH: 1,
-              maxH: 8
-            });
-
-            // Update row information
-            rowHeight = Math.max(rowHeight, smallestNote.height);
-            smallestNote.used = true;
-            currentCol += smallestNote.width;
-          } else {
-            // No more notes available
-            break;
-          }
-        }
-      }
-    }
-
-    // If we placed nothing in this row, we're done
-    if (rowHeight === 0) break;
-
-    // Move to the next row
-    currentRow += rowHeight;
+function placeNotesWithBacktracking(
+  grid: boolean[][],
+  startRow: number,
+  startCol: number,
+  noteItems: Array<{ note: Note; width: number; height: number }>,
+  usedNotes: boolean[],
+  layout: LayoutItem[],
+  maxCols: number,
+  maxRows: number
+): boolean {
+  // Base case: if we've used all notes or reached the end of the grid
+  if (usedNotes.every(used => used) || startRow >= maxRows) {
+    return true;
   }
 
-  // Add any remaining notes that haven't been placed yet
-  const unusedNotes = availableNotes.filter(item => !item.used);
-  if (unusedNotes.length > 0) {
-    // Shuffle the remaining notes for randomness
-    for (let i = unusedNotes.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [unusedNotes[i], unusedNotes[j]] = [unusedNotes[j], unusedNotes[i]];
-    }
+  // If we've reached the end of a row, move to the next row
+  if (startCol >= maxCols) {
+    return placeNotesWithBacktracking(
+      grid, startRow + 1, 0, noteItems, usedNotes, layout, maxCols, maxRows
+    );
+  }
 
-    // Place the remaining notes in a new row
-    let col = 0;
-    for (const item of unusedNotes) {
-      if (col + item.width > maxCols) {
-        col = 0;
-        currentRow += 1;
-      }
+  // If this cell is already occupied, move to the next cell
+  if (grid[startRow][startCol]) {
+    return placeNotesWithBacktracking(
+      grid, startRow, startCol + 1, noteItems, usedNotes, layout, maxCols, maxRows
+    );
+  }
 
+  // Get available notes (not used yet)
+  const availableIndices = usedNotes
+    .map((used, index) => used ? -1 : index)
+    .filter(index => index !== -1);
+
+  // If no notes available, we're done with this branch
+  if (availableIndices.length === 0) {
+    return true;
+  }
+
+  // Randomize the order of available notes
+  shuffleArray(availableIndices);
+
+  // Try each available note
+  for (const index of availableIndices) {
+    const item = noteItems[index];
+
+    // Check if this note can fit at the current position
+    if (canPlaceNote(grid, startRow, startCol, item.width, item.height, maxCols, maxRows)) {
+      // Mark this note as used
+      usedNotes[index] = true;
+
+      // Place this note on the grid
+      markGridOccupied(grid, startRow, startCol, item.width, item.height, true);
+
+      // Add to layout
       layout.push({
         i: item.note.id,
-        x: col,
-        y: currentRow,
+        x: startCol,
+        y: startRow,
         w: item.width,
         h: item.height,
         minW: 1,
@@ -170,44 +108,104 @@ export function rearrangeLayout(notes: Note[], relativeSizes: { width: number; h
         maxH: 8
       });
 
-      col += item.width;
+      // Calculate the next position to try
+      // Strategy: move to the right of the current note, or to the next row if at edge
+      const nextCol = (startCol + item.width >= maxCols) ? 0 : startCol + item.width;
+      const nextRow = (nextCol === 0) ? findNextEmptyRow(grid, startRow, maxCols) : startRow;
+
+      // Recursively try to place more notes
+      if (placeNotesWithBacktracking(
+        grid, nextRow, nextCol, noteItems, usedNotes, layout, maxCols, maxRows
+      )) {
+        return true; // Successfully placed all notes
+      }
+
+      // If we get here, backtracking is needed
+      // Remove this note from layout
+      layout.pop();
+
+      // Mark grid as unoccupied
+      markGridOccupied(grid, startRow, startCol, item.width, item.height, false);
+
+      // Mark note as unused
+      usedNotes[index] = false;
     }
   }
 
-  // Now add the final step: optimize the layout to handle variable heights
-  optimizeVariableHeights(layout, maxCols);
-
-  return layout;
+  // If we get here, no placement worked from this position
+  // Try the next position
+  return placeNotesWithBacktracking(
+    grid, startRow, startCol + 1, noteItems, usedNotes, layout, maxCols, maxRows
+  );
 }
 
-function optimizeVariableHeights(layout: LayoutItem[], _maxCols: number): void {
-  // Sort layout by y position (top to bottom)
-  layout.sort((a, b) => a.y - b.y || a.x - b.x);
+// Check if a note can be placed at the specified position
+function canPlaceNote(
+  grid: boolean[][],
+  startRow: number,
+  startCol: number,
+  width: number,
+  height: number,
+  maxCols: number,
+  maxRows: number
+): boolean {
+  // Check if the note would go out of bounds
+  if (startCol + width > maxCols || startRow + height > maxRows) {
+    return false;
+  }
 
-  // Group items by their starting y-coordinate
-  const rowGroups: Record<number, LayoutItem[]> = {};
-  layout.forEach(item => {
-    if (!rowGroups[item.y]) {
-      rowGroups[item.y] = [];
+  // Check if all cells needed are empty
+  for (let r = 0; r < height; r++) {
+    for (let c = 0; c < width; c++) {
+      if (grid[startRow + r][startCol + c]) {
+        return false; // Cell is already occupied
+      }
     }
-    rowGroups[item.y].push(item);
-  });
+  }
 
-  // Process each row group and adjust vertical positions
-  let currentY = 0;
-  const processedRows = Object.keys(rowGroups)
-    .map(Number)
-    .sort((a, b) => a - b);
+  return true;
+}
 
-  processedRows.forEach(rowY => {
-    const rowItems = rowGroups[rowY];
-    const maxHeightInRow = Math.max(...rowItems.map(item => item.h));
+// Mark cells as occupied or unoccupied
+function markGridOccupied(
+  grid: boolean[][],
+  startRow: number,
+  startCol: number,
+  width: number,
+  height: number,
+  isOccupied: boolean
+): void {
+  for (let r = 0; r < height; r++) {
+    for (let c = 0; c < width; c++) {
+      grid[startRow + r][startCol + c] = isOccupied;
+    }
+  }
+}
 
-    // Adjust the y-position of all items in this row
-    rowItems.forEach(item => {
-      item.y = currentY;
-    });
+// Find the next row with any empty cell
+function findNextEmptyRow(
+  grid: boolean[][],
+  currentRow: number,
+  maxCols: number
+): number {
+  let row = currentRow;
 
-    currentY += maxHeightInRow;
-  });
+  while (row < grid.length) {
+    for (let col = 0; col < maxCols; col++) {
+      if (!grid[row][col]) {
+        return row; // Found a row with an empty cell
+      }
+    }
+    row++;
+  }
+
+  return row; // No empty cells found, return next row
+}
+
+// Shuffle array in-place (Fisher-Yates algorithm)
+function shuffleArray(array: number[]): void {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
