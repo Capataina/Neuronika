@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ReactMarkdown from 'react-markdown';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNoteStore } from "../../store/NoteStore";
 
 interface NoteCardProps {
@@ -16,6 +16,29 @@ export default function NoteCard({ id, title, content, onEditStateChange }: Note
   const [editTitle, setEditTitle] = useState(title);
   const [isTitleEditing, setIsTitleEditing] = useState(false);
   const updateNote = useNoteStore(state => state.updateNote);
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Check for content overflow
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (contentRef.current) {
+        const hasVerticalOverflow = contentRef.current.scrollHeight > contentRef.current.clientHeight;
+        setHasOverflow(hasVerticalOverflow);
+      }
+    };
+
+    // Check initially
+    checkOverflow();
+
+    // Set up resize observer to check when dimensions change
+    const resizeObserver = new ResizeObserver(checkOverflow);
+    if (contentRef.current) {
+      resizeObserver.observe(contentRef.current);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, [content]);
 
   // Add double click handler for editing
   const handleDoubleClick = (e: React.MouseEvent) => {
@@ -100,19 +123,33 @@ export default function NoteCard({ id, title, content, onEditStateChange }: Note
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()} // Add this to prevent drag start
+            onMouseDown={(e) => e.stopPropagation()}
             autoFocus
           />
         ) : (
           <div
             onDoubleClick={handleDoubleClick}
-            onMouseDown={(e) => e.stopPropagation()} // Add this to prevent immediate drag
+            onMouseDown={(e) => e.stopPropagation()}
             className="cursor-text h-full"
           >
-            <div className="note-content">
-              <ReactMarkdown>
-                {content}
-              </ReactMarkdown>
+            <div className="note-content-wrapper">
+              <div
+                ref={contentRef}
+                className={`note-content ${hasOverflow ? 'has-overflow' : ''}`}
+              >
+                <ReactMarkdown components={{
+                  // Ensure links open in new tab
+                  a: ({ node, ...props }) => (
+                    <a {...props} target="_blank" rel="noopener noreferrer" />
+                  ),
+                  // Prevent images from breaking layout
+                  img: ({ node, ...props }) => (
+                    <img {...props} style={{ maxWidth: '100%', height: 'auto' }} />
+                  )
+                }}>
+                  {content}
+                </ReactMarkdown>
+              </div>
             </div>
           </div>
         )}

@@ -88,19 +88,15 @@ This helps you organize items in a hierarchical way.`
     content: `Inline code is used for short code snippets. Surround the text with backticks (\`).
 
 Example:
-\`\`\`
 Use \`console.log()\` to print messages in JavaScript.
-\`\`\`
 
 For longer code, use triple backticks before and after your code block:
 
 \`\`\`
-\`\`\`javascript
 function greet(name) {
   return "Hello, " + name;
-}
+  }
 console.log(greet("World"));
-\`\`\`
 \`\`\`
 
 This makes your code more readable and preserves formatting.`
@@ -165,6 +161,16 @@ Don't forget to try out links, images, tables, and more for an even richer note 
   {
     title: "Using Neuronika: AutoFormatting",
     content: ` To use Neuronika's auto-formatting feature, simply type your text and press space bar to allow the app to apply the formatting.
+`
+  },
+  {
+    title: "Using Neuronika: Taking Notes",
+    content: ` Double click the title of the note card to edit the title. Double click the content of the note card to edit the content.
+`
+  },
+  {
+    title: "Using Neuronika: Resizing and Dragging Notes",
+    content: ` Hold and drag the sides or the corners of the note card to resize it. To move the note card, click and drag it to the desired location.
 `
   }
 ];
