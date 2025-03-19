@@ -1,26 +1,25 @@
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useNoteStore } from '../../store/NoteStore';
 import NoteCard from './NoteCard';
+import { calculateRelativeSizes } from '../../MathUtils/autoResizing';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import { rearrangeLayout } from '../../MathUtils/rearrange';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function MasonryBoard() {
   const notes = useNoteStore((state) => state.notes);
 
+  // Calculate relative sizes based on content length
+  const relativeSizes = calculateRelativeSizes(notes);
+
   const layouts = {
-    lg: notes.map((note, i) => ({
-      i: note.id,
-      x: (i % 8) * 1, // Ensure proper spacing
-      y: Math.floor(i / 8),
-      w: 1, // Make each note take up 1/8 of the width
-      h: 2,
-      minW: 1,
-      maxW: 8,
-      minH: 1,
-      maxH: 8,
-    })),
+    lg: rearrangeLayout(notes, relativeSizes),
+    md: rearrangeLayout(notes, relativeSizes),
+    sm: rearrangeLayout(notes, relativeSizes),
+    xs: rearrangeLayout(notes, relativeSizes),
+    xxs: rearrangeLayout(notes, relativeSizes),
   };
 
   return (

@@ -5,20 +5,25 @@ export interface Note {
   id: string;
   title: string;
   content: string;
+  contentSize: number;
 }
 
 interface NoteStore {
   notes: Note[];
-  addNote: (note: Omit<Note, 'id'>) => void;
+  addNote: (note: Omit<Note, 'id' | 'contentSize'>) => void;
   removeNote: (id: string) => void;
-  updateNote: (id: string, updates: Partial<Omit<Note, 'id'>>) => void;
+  updateNote: (id: string, updates: Partial<Omit<Note, 'id' | 'contentSize'>>) => void;
 }
 
 export const useNoteStore = create<NoteStore>((set) => ({
   notes: [],
 
   addNote: (note) => set((state) => ({
-    notes: [...state.notes, { ...note, id: crypto.randomUUID() }]
+    notes: [...state.notes, {
+      ...note,
+      id: crypto.randomUUID(),
+      contentSize: note.content.length
+    }]
   })),
 
   removeNote: (id) => set((state) => ({
@@ -27,7 +32,13 @@ export const useNoteStore = create<NoteStore>((set) => ({
 
   updateNote: (id, updates) => set((state) => ({
     notes: state.notes.map((note) =>
-      note.id === id ? { ...note, ...updates } : note
+      note.id === id
+        ? {
+          ...note,
+          ...updates,
+          contentSize: updates.content ? updates.content.length : note.contentSize
+        }
+        : note
     )
   }))
 }));
