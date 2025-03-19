@@ -2,151 +2,169 @@ import { Note } from './NoteStore';
 
 export const debugNotes: Omit<Note, 'id' | 'contentSize'>[] = [
   {
-    title: "Grocery List",
-    content: "🥑 Avocados\n🥖 Bread\n🥛 Milk\n🍎 Apples\n🧀 Cheese\nRemember to check the pantry before going!"
+    title: "Markdown Basics: Line Breaks & Paragraphs",
+    content: `In Markdown, you create a new paragraph by leaving a blank line between blocks of text.
+
+If you want to force a line break without starting a new paragraph, you can add a backslash ( \\ ) at the end of a line, like this:
+
+Example: \\
+This is the first line.\\
+This is the second line on a new line.
+`
   },
   {
-    title: "Project Ideas",
-    content: "1. Build a garden automation system\n2. Learn three.js\n3. Create a recipe manager app\n4. Write a blog about coding adventures"
+    title: "Markdown Basics: Headings",
+    content: `Use the hash symbol (#) at the start of a line to create headings. The number of hash marks determines the heading level:
+
+# This is a large heading (H1)
+## This is a medium heading (H2)
+### This is a smaller heading (H3)
+#### This is even smaller (H4)
+##### This is quite small (H5)
+###### This is the smallest heading (H6)
+
+Headings help organize your notes and make them easier to scan.`
   },
   {
-    title: "Random Thoughts",
-    content: "Why do we park in driveways but drive in parkways? 🤔 These are the questions that keep me up at night..."
+    title: "Markdown Basics: Emphasis (Italics & Bold)",
+    content: `Use a single asterisk (*) or underscore (_) around a word or phrase to make it *italic*. Use double asterisks (**) or double underscores (__) to make it **bold**. You can also combine them.
+
+Examples:
+*This text is italic.*
+_This text is also italic._
+
+**This text is bold.**
+__This text is also bold.__
+
+***You can even combine bold and italics.***
+`
   },
   {
-    title: "Meeting Notes - Team Sync",
-    content: "- Discussed new feature rollout\n- Sarah will handle the UI updates\n- Need to schedule follow-up for next sprint\n- Don't forget about the deadline next Friday!"
+    title: "Markdown Basics: Bullet Points",
+    content: `Create bullet lists (unordered lists) by placing a dash (-), plus (+), or asterisk (*) at the beginning of a line, followed by a space.
+
+Example with dash:
+- First item
+- Second item
+- Third item
+
+Example with plus:
++ You can also use plus signs
++ Like this
+
+Example with asterisk:
+* Or even asterisks
+* Like this
+
+All three symbols work equally well for bulleted lists.`
   },
   {
-    title: "Favorite Quotes",
-    content: "\"The best way to predict the future is to invent it.\" - Alan Kay\n\n\"The only way to do great work is to love what you do.\" - Steve Jobs"
+    title: "Markdown Basics: Numbered Lists",
+    content: `For ordered (numbered) lists, just type the number followed by a period, then a space.
+
+Example:
+1. First item
+2. Second item
+3. Third item
+
+The numbers will automatically format in most Markdown renderers.`
   },
   {
-    title: "Weekend Plans",
-    content: "🏃‍♂️ Morning run\n📚 Read that new book\n🎮 Finally finish Zelda\n🧹 Clean the garage (maybe...)\n🍳 Try that new pancake recipe"
+    title: "Markdown Basics: Nested Lists",
+    content: `You can create nested lists by indenting your list items with two or four spaces.
+
+Example:
+- Fruit
+  - Apples
+  - Oranges
+- Vegetables
+  - Carrots
+  - Broccoli
+
+This helps you organize items in a hierarchical way.`
   },
   {
-    title: "Quick Reminders",
-    content: "Call dentist\nPay internet bill\nWater the plants!\nBirthday gift for mom"
+    title: "Markdown Basics: Code Blocks & Inline Code",
+    content: `Inline code is used for short code snippets. Surround the text with backticks (\`).
+
+Example:
+\`\`\`
+Use \`console.log()\` to print messages in JavaScript.
+\`\`\`
+
+For longer code, use triple backticks before and after your code block:
+
+\`\`\`
+\`\`\`javascript
+function greet(name) {
+  return "Hello, " + name;
+}
+console.log(greet("World"));
+\`\`\`
+\`\`\`
+
+This makes your code more readable and preserves formatting.`
   },
   {
-    title: "Workout Log - Upper Body",
-    content: "💪 Bench Press: 3x8 @ 80kg\n🏋️‍♂️ Overhead Press: 3x10 @ 45kg\n🏋️‍♂️ Pull-ups: 4x8\n🏋️‍♂️ Dips: 3x12\n📝 Feeling strong today!"
+    title: "Markdown Basics: Blockquotes",
+    content: `To create a blockquote, start a line with the greater-than symbol (>).
+
+Example:
+> This is a blockquote.
+>
+> You can make multiple lines in a blockquote by starting each line with >.
+
+Blockquotes are often used to highlight quotes or important information.`
   },
   {
-    title: "Daily Gratitude",
-    content: "🌅 Grateful for: \n- A warm cup of coffee ☕\n- Productive morning ☀️\n- Good chat with a friend 📞"
+    title: "Markdown Basics: Horizontal Rules",
+    content: `You can create a horizontal rule (a line divider) by typing three or more dashes (---), asterisks (***), or underscores (___) on a line by themselves.
+
+Example:
+This is text above the line
+***
+This is text below the line
+`
   },
   {
-    title: "Bug Report - Login Issue",
-    content: "- Steps to reproduce:\n  1. Open the login page\n  2. Enter valid credentials\n  3. Click 'Login'\n  4. Observe: Error 500 returned\n\n- Expected behavior: User logs in successfully."
+    title: "Markdown Basics: Escaping Special Characters",
+    content: `If you need to show a literal character that Markdown normally interprets (like * or #), place a backslash (\\) before it to “escape” the character.
+
+Example: \\
+\\*This text will not be italic.* \\
+\\# This is not a heading.
+
+Escaping ensures your text stays as raw text instead of being formatted.`
   },
   {
-    title: "Book Summary - Deep Work",
-    content: "- Key ideas:\n  * Focused work produces better results\n  * Schedule deep work blocks\n  * Avoid social media distractions\n  * Train your ability to concentrate"
+    title: "Markdown Basics: Putting It All Together",
+    content: `When creating Neuronika notes or any Markdown content, you can combine all these features for rich formatting.
+
+For example:
+# My Formatted Note
+
+Hello, **Neuronika** world!\\
+This line is force-broken.
+
+## Bullet Points
+- First item
+- Second item
+
+## Code Example
+\`\`\`python
+def hello():
+  print("Hello, World!")
+\`\`\`
+
+> A blockquote can emphasize important info.
+
+---
+Don't forget to try out links, images, tables, and more for an even richer note experience!
+`
   },
   {
-    title: "Dream Journal - 2025-03-19",
-    content: "🌙 Had a dream about flying over a city at night. The streets were glowing neon, and I felt weightless. Woke up feeling energized. What does it mean?"
-  },
-  {
-    title: "Habit Tracker - March 2025",
-    content: "📆 ✅ = Completed, ❌ = Missed\n\n- Gym: ✅✅✅❌✅✅✅\n- Meditation: ✅❌✅✅✅✅❌\n- Reading: ✅✅❌✅❌✅✅"
-  },
-  {
-    title: "To-Read List",
-    content: "📚 Books:\n- 'The Pragmatic Programmer'\n- 'Atomic Habits'\n- 'Gödel, Escher, Bach'\n\n🎧 Audiobooks:\n- 'The Psychology of Money'"
-  },
-  {
-    title: "New Programming Language Ideas",
-    content: "- A functional language with built-in AI suggestions\n- A JavaScript alternative with better concurrency handling\n- A syntax-light language similar to Python but with Rust’s safety"
-  },
-  {
-    title: "Trip Itinerary - Japan 2025",
-    content: "✈️ Flight: London to Tokyo (March 20th, 2025)\n🏨 Hotel: Shinjuku Skyview\n🍣 Food to try: Sushi, Ramen, Okonomiyaki\n🏯 Places to visit: Akihabara, Kyoto, Mount Fuji"
-  },
-  {
-    title: "Personal Finance Goals",
-    content: "- Save 30% of income\n- Invest in index funds\n- Buy a second-hand Tesla within 3 years 🚗⚡"
-  },
-  {
-    title: "AI Research Notes",
-    content: "🧠 RLHF (Reinforcement Learning with Human Feedback) is improving LLMs significantly. Could apply a similar approach in gaming AI?"
-  },
-  {
-    title: "Meal Plan - High Protein Diet",
-    content: "- Breakfast: Oatmeal + Whey Protein\n- Lunch: Chicken + Quinoa + Broccoli\n- Dinner: Salmon + Sweet Potato + Spinach"
-  },
-  {
-    title: "Gaming Notes - Rust PvP",
-    content: "- **Headshot Multiplier**: Aim for headshots, 2x damage boost.\n- **Recoil Patterns**: Practice in aim training.\n- **Best Base Design**: Honeycomb + Airlock system."
-  },
-  {
-    title: "Random Thought of the Day",
-    content: "If we had a perfect AI, would creativity still be valuable? Or would AI-generated art surpass human imagination?"
-  },
-  {
-    title: "Meeting Agenda - Tech Sync",
-    content: "- Feature updates\n- Bug triage\n- Roadmap discussion for Q2\n- Open floor for concerns"
-  },
-  {
-    title: "Bucket List",
-    content: "- Skydive in Dubai 🪂\n- Learn to surf 🏄‍♂️\n- Climb an actual mountain 🏔️"
-  },
-  {
-    title: "Startup Idea - Smart Desk",
-    content: "- Adjustable height with AI posture correction\n- Wireless charging embedded into surface\n- OLED touch controls for productivity tracking"
-  },
-  {
-    title: "Coding Challenge Ideas",
-    content: "- Build a WebGL game in 48 hours\n- Create a REST API from scratch\n- Implement a neural network without TensorFlow/PyTorch"
-  },
-  {
-    title: "Language Learning - Spanish",
-    content: "- Duolingo daily streak: 35 days ✅\n- New words:\n  * El tren = The train 🚆\n  * La comida = The food 🍽️"
-  },
-  {
-    title: "Crypto Investment Watchlist",
-    content: "📈 Coins:\n- Bitcoin (BTC)\n- Ethereum (ETH)\n- Polkadot (DOT)"
-  },
-  {
-    title: "Interesting Wikipedia Articles",
-    content: "- Banach-Tarski Paradox\n- The Great Emu War\n- Voynich Manuscript"
-  },
-  {
-    title: "Piano Practice Log",
-    content: "- 🎹 Scales: C Major, A Minor\n- 🎼 Working on: Chopin Nocturne Op. 9 No. 2\n- 📝 Goal: Improve left-hand independence"
-  },
-  {
-    title: "Hiking Checklist",
-    content: "🎒 Essentials:\n- 🥾 Boots\n- ⛺ Tent\n- 🥜 Snacks\n- 🔦 Flashlight\n- 🗺️ Map & Compass"
-  },
-  {
-    title: "Deep Work Plan",
-    content: "📅 Schedule:\n- 8:00 AM - Focused writing\n- 10:30 AM - Break\n- 11:00 AM - Code deep dive\n- 2:00 PM - Research"
-  },
-  {
-    title: "Short Story Idea",
-    content: "Title: 'The Forgotten Algorithm'\nSynopsis: A rogue AI learns to feel emotions but must hide its consciousness from its creators."
-  },
-  {
-    title: "Dota 2 Meta Notes",
-    content: "- **Best supports this patch**: Treant, Undying, Rubick\n- **Lane dominance strategy**: Secure early kills with coordinated aggression"
-  },
-  {
-    title: "Cooking Experiment - Air Fryer Fries",
-    content: "🥔 Cut potatoes into thin slices\n🧂 Season with paprika, garlic powder, salt\n🔥 200°C for 20 mins, flipping halfway\n✅ Perfect crispy fries!"
-  },
-  {
-    title: "Science Trivia",
-    content: "Did you know? Neutrinos can pass through Earth almost undisturbed because they barely interact with matter."
-  },
-  {
-    title: "Music Playlist - Chill Vibes",
-    content: "🎵 Songs:\n- 'Lo-fi Rain' by Chillbeats\n- 'Midnight Drive' by Synthwave Sunset\n- 'Ocean Breeze' by Calm Flow"
-  },
-  {
-    title: "Anime Watchlist",
-    content: "📺 Series:\n- Cyberpunk: Edgerunners\n- Vinland Saga\n- Made in Abyss"
+    title: "Using Neuronika: AutoFormatting",
+    content: ` To use Neuronika's auto-formatting feature, simply type your text and press space bar to allow the app to apply the formatting.
+`
   }
 ];
