@@ -69,5 +69,12 @@
   width: 100%;
   box-sizing: border-box;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: #1E1E1E;
+  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+.board-container::-webkit-scrollbar {
+  display: none;  /* WebKit */
 }

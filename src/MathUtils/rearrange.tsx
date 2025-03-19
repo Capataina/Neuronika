@@ -12,127 +12,200 @@ interface LayoutItem {
   maxH: number;
 }
 
-interface Position {
-  x: number;
-  y: number;
-  score: number;
-}
-
 export function rearrangeLayout(notes: Note[], relativeSizes: { width: number; height: number }[]): LayoutItem[] {
-  // Create a randomly shuffled array of indices
-  const shuffledIndices = [...Array(notes.length).keys()];
-  for (let i = shuffledIndices.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
-  }
+  // Create a copy of notes and sizes to work with
+  const noteItems = notes.map((note, index) => ({
+    note,
+    width: relativeSizes[index].width,
+    height: relativeSizes[index].height,
+  }));
 
   const maxCols = 8;
-  const maxRows = 50;
-  const grid: boolean[][] = Array(maxRows).fill(null).map(() => Array(maxCols).fill(false));
+  const maxRows = 50; // Upper limit to prevent infinite recursion
+
+  // Create grid to track occupied cells
+  const grid: boolean[][] = Array(maxRows).fill(0).map(() => Array(maxCols).fill(false));
+
+  // Array to track which notes have been placed
+  const usedNotes = new Array(noteItems.length).fill(false);
+
+  // Final layout result
   const layout: LayoutItem[] = [];
 
-  function canFitCard(row: number, col: number, width: number, height: number): boolean {
-    if (col + width > maxCols || row + height > maxRows) return false;
+  // Start the recursive placement from top-left
+  placeNotesWithBacktracking(grid, 0, 0, noteItems, usedNotes, layout, maxCols, maxRows);
 
-    for (let h = 0; h < height; h++) {
-      for (let w = 0; w < width; w++) {
-        if (grid[row + h][col + w]) return false;
-      }
-    }
+  // Sort by position for cleaner display
+  layout.sort((a, b) => a.y - b.y || a.x - b.x);
+
+  return layout;
+}
+
+function placeNotesWithBacktracking(
+  grid: boolean[][],
+  startRow: number,
+  startCol: number,
+  noteItems: Array<{ note: Note; width: number; height: number }>,
+  usedNotes: boolean[],
+  layout: LayoutItem[],
+  maxCols: number,
+  maxRows: number
+): boolean {
+  // Base case: if we've used all notes or reached the end of the grid
+  if (usedNotes.every(used => used) || startRow >= maxRows) {
     return true;
   }
 
-  function findBestPosition(width: number, height: number): Position {
-    let bestScore = Infinity;
-    let bestPositions: Position[] = [];
-
-    for (let row = 0; row < maxRows; row++) {
-      for (let col = 0; col <= maxCols - width; col++) {
-        if (!canFitCard(row, col, width, height)) continue;
-
-        // Calculate score based on gaps that would be created
-        let score = row * 2; // Prefer higher positions
-
-        // Check for gaps above
-        let hasCardAbove = false;
-        if (row > 0) {
-          for (let w = 0; w < width; w++) {
-            if (grid[row - 1][col + w]) {
-              hasCardAbove = true;
-              break;
-            }
-          }
-        }
-        if (!hasCardAbove && row > 0) score += 4;
-
-        // Check for cards to the left and right
-        let hasAdjacentCard = false;
-        // Left
-        if (col > 0) {
-          for (let h = 0; h < height; h++) {
-            if (grid[row + h][col - 1]) {
-              hasAdjacentCard = true;
-              break;
-            }
-          }
-        }
-        // Right
-        if (col + width < maxCols) {
-          for (let h = 0; h < height; h++) {
-            if (grid[row + h][col + width]) {
-              hasAdjacentCard = true;
-              break;
-            }
-          }
-        }
-        if (!hasAdjacentCard) score += 2;
-
-        // If this score is better or equal to our best score, add it to possibilities
-        if (score <= bestScore) {
-          if (score < bestScore) {
-            bestPositions = [];
-            bestScore = score;
-          }
-          bestPositions.push({ x: col, y: row, score });
-        }
-      }
-
-      // If we found positions and they're at the top, no need to look further
-      if (bestPositions.length > 0 && bestScore <= 2) break;
-    }
-
-    // Randomly select from the best positions
-    return bestPositions[Math.floor(Math.random() * bestPositions.length)];
+  // If we've reached the end of a row, move to the next row
+  if (startCol >= maxCols) {
+    return placeNotesWithBacktracking(
+      grid, startRow + 1, 0, noteItems, usedNotes, layout, maxCols, maxRows
+    );
   }
 
-  // Place each note
-  shuffledIndices.forEach((originalIndex) => {
-    const note = notes[originalIndex];
-    const size = relativeSizes[originalIndex];
+  // If this cell is already occupied, move to the next cell
+  if (grid[startRow][startCol]) {
+    return placeNotesWithBacktracking(
+      grid, startRow, startCol + 1, noteItems, usedNotes, layout, maxCols, maxRows
+    );
+  }
 
-    const position = findBestPosition(size.width, size.height);
+  // Get available notes (not used yet)
+  const availableIndices = usedNotes
+    .map((used, index) => used ? -1 : index)
+    .filter(index => index !== -1);
 
-    if (position) {
-      // Mark the grid spaces as occupied
-      for (let h = 0; h < size.height; h++) {
-        for (let w = 0; w < size.width; w++) {
-          grid[position.y + h][position.x + w] = true;
-        }
-      }
+  // If no notes available, we're done with this branch
+  if (availableIndices.length === 0) {
+    return true;
+  }
 
+  // Randomize the order of available notes
+  shuffleArray(availableIndices);
+
+  // Try each available note
+  for (const index of availableIndices) {
+    const item = noteItems[index];
+
+    // Check if this note can fit at the current position
+    if (canPlaceNote(grid, startRow, startCol, item.width, item.height, maxCols, maxRows)) {
+      // Mark this note as used
+      usedNotes[index] = true;
+
+      // Place this note on the grid
+      markGridOccupied(grid, startRow, startCol, item.width, item.height, true);
+
+      // Add to layout
       layout.push({
-        i: note.id,
-        x: position.x,
-        y: position.y,
-        w: size.width,
-        h: size.height,
+        i: item.note.id,
+        x: startCol,
+        y: startRow,
+        w: item.width,
+        h: item.height,
         minW: 1,
         maxW: 8,
         minH: 1,
-        maxH: 8,
+        maxH: 8
       });
-    }
-  });
 
-  return layout;
+      // Calculate the next position to try
+      // Strategy: move to the right of the current note, or to the next row if at edge
+      const nextCol = (startCol + item.width >= maxCols) ? 0 : startCol + item.width;
+      const nextRow = (nextCol === 0) ? findNextEmptyRow(grid, startRow, maxCols) : startRow;
+
+      // Recursively try to place more notes
+      if (placeNotesWithBacktracking(
+        grid, nextRow, nextCol, noteItems, usedNotes, layout, maxCols, maxRows
+      )) {
+        return true; // Successfully placed all notes
+      }
+
+      // If we get here, backtracking is needed
+      // Remove this note from layout
+      layout.pop();
+
+      // Mark grid as unoccupied
+      markGridOccupied(grid, startRow, startCol, item.width, item.height, false);
+
+      // Mark note as unused
+      usedNotes[index] = false;
+    }
+  }
+
+  // If we get here, no placement worked from this position
+  // Try the next position
+  return placeNotesWithBacktracking(
+    grid, startRow, startCol + 1, noteItems, usedNotes, layout, maxCols, maxRows
+  );
+}
+
+// Check if a note can be placed at the specified position
+function canPlaceNote(
+  grid: boolean[][],
+  startRow: number,
+  startCol: number,
+  width: number,
+  height: number,
+  maxCols: number,
+  maxRows: number
+): boolean {
+  // Check if the note would go out of bounds
+  if (startCol + width > maxCols || startRow + height > maxRows) {
+    return false;
+  }
+
+  // Check if all cells needed are empty
+  for (let r = 0; r < height; r++) {
+    for (let c = 0; c < width; c++) {
+      if (grid[startRow + r][startCol + c]) {
+        return false; // Cell is already occupied
+      }
+    }
+  }
+
+  return true;
+}
+
+// Mark cells as occupied or unoccupied
+function markGridOccupied(
+  grid: boolean[][],
+  startRow: number,
+  startCol: number,
+  width: number,
+  height: number,
+  isOccupied: boolean
+): void {
+  for (let r = 0; r < height; r++) {
+    for (let c = 0; c < width; c++) {
+      grid[startRow + r][startCol + c] = isOccupied;
+    }
+  }
+}
+
+// Find the next row with any empty cell
+function findNextEmptyRow(
+  grid: boolean[][],
+  currentRow: number,
+  maxCols: number
+): number {
+  let row = currentRow;
+
+  while (row < grid.length) {
+    for (let col = 0; col < maxCols; col++) {
+      if (!grid[row][col]) {
+        return row; // Found a row with an empty cell
+      }
+    }
+    row++;
+  }
+
+  return row; // No empty cells found, return next row
+}
+
+// Shuffle array in-place (Fisher-Yates algorithm)
+function shuffleArray(array: number[]): void {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }

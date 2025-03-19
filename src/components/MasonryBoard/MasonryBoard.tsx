@@ -5,25 +5,48 @@ import { calculateRelativeSizes } from '../../MathUtils/autoResizing';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { rearrangeLayout } from '../../MathUtils/rearrange';
+import { useState, useMemo, useEffect } from 'react';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function MasonryBoard() {
   const notes = useNoteStore((state) => state.notes);
+  const [isAnyCardEditing, setIsAnyCardEditing] = useState(false);
+  const [layoutVersion, setLayoutVersion] = useState(0);
 
-  // Calculate relative sizes based on content length
-  const relativeSizes = calculateRelativeSizes(notes);
+  // Calculate layouts only when layoutVersion changes
+  const layouts = useMemo(() => {
+    const relativeSizes = calculateRelativeSizes(notes);
+    return {
+      lg: rearrangeLayout(notes, relativeSizes),
+      md: rearrangeLayout(notes, relativeSizes),
+      sm: rearrangeLayout(notes, relativeSizes),
+      xs: rearrangeLayout(notes, relativeSizes),
+      xxs: rearrangeLayout(notes, relativeSizes),
+    };
+  }, [layoutVersion]); // Remove notes dependency, only depend on layoutVersion
 
-  const layouts = {
-    lg: rearrangeLayout(notes, relativeSizes),
-    md: rearrangeLayout(notes, relativeSizes),
-    sm: rearrangeLayout(notes, relativeSizes),
-    xs: rearrangeLayout(notes, relativeSizes),
-    xxs: rearrangeLayout(notes, relativeSizes),
+  // Add keyboard event handler
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.code === 'Space' && !isAnyCardEditing) {
+        event.preventDefault(); // Prevent page scroll
+        setLayoutVersion(v => v + 1); // Increment to trigger recalculation
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isAnyCardEditing]);
+
+  const handleEditStateChange = (editing: boolean) => {
+    setTimeout(() => {
+      setIsAnyCardEditing(editing);
+    }, 0);
   };
 
   return (
-    <div className="h-full w-full overflow-auto">
+    <div className="masonry-container">
       <ResponsiveGridLayout
         className="layout"
         layouts={layouts}
@@ -32,13 +55,19 @@ export default function MasonryBoard() {
         rowHeight={100}
         margin={[16, 16]}
         containerPadding={[0, 0]}
-        isDraggable={true}
-        isResizable={true}
+        isDraggable={!isAnyCardEditing}
+        isResizable={!isAnyCardEditing}
+        resizeHandles={['se', 'sw', 'ne', 'nw', 'n', 's', 'e', 'w']}
         useCSSTransforms={true}
       >
         {notes.map((note) => (
           <div key={note.id}>
-            <NoteCard title={note.title} content={note.content} />
+            <NoteCard
+              id={note.id}
+              title={note.title}
+              content={note.content}
+              onEditStateChange={handleEditStateChange}
+            />
           </div>
         ))}
       </ResponsiveGridLayout>

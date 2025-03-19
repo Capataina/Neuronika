@@ -227,22 +227,116 @@ button:focus-visible {
     flex: 1;
     min-height: 0;
     overflow: hidden;
+    padding: 1rem;
   }
 
-  .note-card .note-content {
-    color: var(--muted-foreground);
-    white-space: pre-line;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    overflow: hidden;
+  .note-content {
     height: 100%;
-    display: -webkit-box;
-    -webkit-line-clamp: 6;
-    -webkit-box-orient: vertical;
-    margin: 0;
-    padding: 0;
+    color: var(--muted-foreground);
     font-size: var(--font-size-ui);
     line-height: 1.5;
+    overflow-y: hidden;
+    word-wrap: break-word;
+    position: relative;
+    mask-image: linear-gradient(to bottom, black calc(100% - 32px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 32px), transparent 100%);
+  }
+
+  .note-content.has-overflow::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
+    background: linear-gradient(to bottom, transparent, var(--card) 90%);
+    pointer-events: none;
+  }
+
+  .note-content-wrapper {
+    height: 100%;
+    position: relative;
+  }
+
+  /* Improve markdown styling */
+  .note-content ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin: 0.25em 0;
+  }
+
+  .note-content ol {
+    list-style-type: decimal;
+    padding-left: 1.5em;
+    margin: 0.25em 0;
+  }
+
+  .note-content h1,
+  .note-content h2,
+  .note-content h3,
+  .note-content h4,
+  .note-content h5,
+  .note-content h6 {
+    margin: 0.5em 0 0.25em 0;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .note-content h1 { font-size: 1.5em; }
+  .note-content h2 { font-size: 1.3em; }
+  .note-content h3 { font-size: 1.2em; }
+  .note-content h4 { font-size: 1.1em; }
+  .note-content h5,
+  .note-content h6 { font-size: 1em; }
+
+  .note-content p {
+    margin: 0.25em 0;
+  }
+
+  .note-content strong {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .note-content em {
+    font-style: italic;
+  }
+
+  .note-content code {
+    background-color: var(--muted);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: ui-monospace, monospace;
+  }
+
+  .note-content pre {
+    background-color: var(--muted);
+    padding: 0.75em;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0.5em 0;
+  }
+
+  .note-content pre code {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .note-content blockquote {
+    border-left: 3px solid var(--border);
+    margin: 0.5em 0;
+    padding: 0.25em 0 0.25em 1em;
+    color: var(--muted-foreground);
+    font-style: italic;
+  }
+
+  .note-content a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
   }
 
   .react-resizable-handle {
@@ -257,5 +351,17 @@ button:focus-visible {
     background-origin: content-box;
     box-sizing: border-box;
     cursor: se-resize;
+  }
+
+  .masonry-container {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  }
+
+  .masonry-container::-webkit-scrollbar {
+    display: none;  /* WebKit */
   }
 }
