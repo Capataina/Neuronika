@@ -39,10 +39,8 @@ export default function MasonryBoard() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [isAnyCardEditing]);
 
-  const handleEditStateChange = (editing: boolean) => {
-    setTimeout(() => {
-      setIsAnyCardEditing(editing);
-    }, 0);
+  const handleEditStateChange = (isEditing: boolean) => {
+    setIsAnyCardEditing(isEditing);
   };
 
   return (
@@ -66,6 +64,7 @@ export default function MasonryBoard() {
               id={note.id}
               title={note.title}
               content={note.content}
+              tags={note.tags}
               onEditStateChange={handleEditStateChange}
             />
           </div>
