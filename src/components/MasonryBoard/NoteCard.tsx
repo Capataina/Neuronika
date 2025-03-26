@@ -120,6 +120,13 @@ export default function NoteCard({ id, title, content, tags = [], onEditStateCha
     }
   };
 
+  const handleUpdateTag = (oldTag: string, newTag: string) => {
+    const updatedTags = tags.map(tag =>
+      tag === oldTag ? newTag : tag
+    );
+    updateNote(id, { tags: updatedTags });
+  };
+
   return (
     <Card className="w-full h-full note-card rounded-lg">
       <CardHeader className="note-card-header flex items-center justify-center">
@@ -225,6 +232,7 @@ export default function NoteCard({ id, title, content, tags = [], onEditStateCha
                   key={tag}
                   tag={tag}
                   onDelete={() => handleDeleteTag(tag)}
+                  onUpdate={(newTag) => handleUpdateTag(tag, newTag)}
                 />
               ))}
 

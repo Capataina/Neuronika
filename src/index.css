@@ -92,6 +92,7 @@ h3 {
 }
 
 button {
+  @apply focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none !important;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -530,4 +531,21 @@ button:focus-visible {
   .markdown-content input[type="checkbox"] {
     margin-right: 0.5em;
   }
+}
+
+/* Add these styles to your index.css file */
+.view-toggle-container {
+  @apply transition-all duration-200;
+}
+
+/* Optional: Add a subtle hover effect for the entire toggle group */
+.view-toggle-container:hover {
+  @apply bg-secondary/30;
+}
+
+/* Override shadcn button styles */
+.button-reset {
+  @apply focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
