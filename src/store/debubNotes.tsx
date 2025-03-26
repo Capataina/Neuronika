@@ -10,7 +10,8 @@ If you want to force a line break without starting a new paragraph, you can add 
 Example: \\
 This is the first line.\\
 This is the second line on a new line.
-`
+`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Headings",
@@ -23,7 +24,8 @@ This is the second line on a new line.
 ##### This is quite small (H5)
 ###### This is the smallest heading (H6)
 
-Headings help organize your notes and make them easier to scan.`
+Headings help organize your notes and make them easier to scan.`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Emphasis (Italics & Bold)",
@@ -37,7 +39,8 @@ _This text is also italic._
 __This text is also bold.__
 
 ***You can even combine bold and italics.***
-`
+`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Bullet Points",
@@ -56,7 +59,8 @@ Example with asterisk:
 * Or even asterisks
 * Like this
 
-All three symbols work equally well for bulleted lists.`
+All three symbols work equally well for bulleted lists.`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Numbered Lists",
@@ -67,7 +71,8 @@ Example:
 2. Second item
 3. Third item
 
-The numbers will automatically format in most Markdown renderers.`
+The numbers will automatically format in most Markdown renderers.`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Nested Lists",
@@ -81,7 +86,8 @@ Example:
   - Carrots
   - Broccoli
 
-This helps you organize items in a hierarchical way.`
+This helps you organize items in a hierarchical way.`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Code Blocks & Inline Code",
@@ -99,7 +105,8 @@ function greet(name) {
 console.log(greet("World"));
 \`\`\`
 
-This makes your code more readable and preserves formatting.`
+This makes your code more readable and preserves formatting.`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Blockquotes",
@@ -110,7 +117,8 @@ Example:
 >
 > You can make multiple lines in a blockquote by starting each line with >.
 
-Blockquotes are often used to highlight quotes or important information.`
+Blockquotes are often used to highlight quotes or important information.`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Horizontal Rules",
@@ -120,17 +128,19 @@ Example:
 This is text above the line
 ***
 This is text below the line
-`
+`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Escaping Special Characters",
-    content: `If you need to show a literal character that Markdown normally interprets (like * or #), place a backslash (\\) before it to “escape” the character.
+    content: `If you need to show a literal character that Markdown normally interprets (like * or #), place a backslash (\\) before it to "escape" the character.
 
 Example: \\
 \\*This text will not be italic.* \\
 \\# This is not a heading.
 
-Escaping ensures your text stays as raw text instead of being formatted.`
+Escaping ensures your text stays as raw text instead of being formatted.`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Markdown Basics: Putting It All Together",
@@ -156,21 +166,25 @@ def hello():
 
 ---
 Don't forget to try out links, images, tables, and more for an even richer note experience!
-`
+`,
+    tags: ["Markdown", "Formatting"]
   },
   {
     title: "Using Neuronika: AutoFormatting",
     content: ` To use Neuronika's auto-formatting feature, simply type your text and press space bar to allow the app to apply the formatting.
-`
+`,
+    tags: ["Neuronika", "AutoFormatting"]
   },
   {
     title: "Using Neuronika: Taking Notes",
     content: ` Double click the title of the note card to edit the title. Double click the content of the note card to edit the content.
-`
+`,
+    tags: ["Neuronika", "Editing"]
   },
   {
     title: "Using Neuronika: Resizing and Dragging Notes",
     content: ` Hold and drag the sides or the corners of the note card to resize it. To move the note card, click and drag it to the desired location.
-`
+`,
+    tags: ["Neuronika", "Resizing"]
   }
 ];

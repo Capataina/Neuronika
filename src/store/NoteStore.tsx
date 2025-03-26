@@ -6,6 +6,7 @@ export interface Note {
   title: string;
   content: string;
   contentSize: number;
+  tags: string[];
 }
 
 interface NoteStore {
@@ -22,7 +23,8 @@ export const useNoteStore = create<NoteStore>((set) => ({
     notes: [...state.notes, {
       ...note,
       id: crypto.randomUUID(),
-      contentSize: note.content.length
+      contentSize: note.content.length,
+      tags: note.tags || []
     }]
   })),
 
@@ -36,7 +38,8 @@ export const useNoteStore = create<NoteStore>((set) => ({
         ? {
           ...note,
           ...updates,
-          contentSize: updates.content ? updates.content.length : note.contentSize
+          contentSize: updates.content ? updates.content.length : note.contentSize,
+          tags: updates.tags !== undefined ? updates.tags : note.tags
         }
         : note
     )
