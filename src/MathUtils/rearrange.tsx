@@ -102,10 +102,10 @@ function placeNotesWithBacktracking(
         y: startRow,
         w: item.width,
         h: item.height,
-        minW: 1,
+        minW: 2,
         maxW: 8,
-        minH: 1,
-        maxH: 8
+        minH: Math.max(2, Math.floor(item.height / 2)),
+        maxH: Math.min(8, Math.ceil(item.height * 1.5))
       });
 
       // Calculate the next position to try

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { useViewStore } from "../../store/ViewStore"
 import type { ViewType } from "../../store/ViewStore"
 import { cn } from "@/lib/utils"
+import SemanticSearch from "../SemanticSearch/SemanticSearch"
 
 export default function MenuBar() {
   const { currentView, setView } = useViewStore()
@@ -59,7 +60,7 @@ export default function MenuBar() {
 
       {/* Middle section - Search bar */}
       <div className="flex-1 flex justify-center max-w-2xl">
-        {/* Placeholder for search bar */}
+        <SemanticSearch />
       </div>
 
       {/* Right section - Reorder button */}
