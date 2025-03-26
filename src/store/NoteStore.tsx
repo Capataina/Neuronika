@@ -59,6 +59,25 @@ export const useNoteStore = create<NoteStore>((set) => ({
         }
         : note
     );
-    return { notes: updatedNotes };
+
+    // If we have active search results, we need to update them as well
+    let updatedSearchResults = state.searchResults;
+    if (state.searchResults) {
+      updatedSearchResults = state.searchResults.map((note) =>
+        note.id === id
+          ? {
+            ...note,
+            ...updates,
+            contentSize: updates.content ? calculateContentSize(updates.content) : note.contentSize,
+            tags: updates.tags !== undefined ? updates.tags : note.tags
+          }
+          : note
+      );
+    }
+
+    return {
+      notes: updatedNotes,
+      searchResults: updatedSearchResults
+    };
   })
 }));
