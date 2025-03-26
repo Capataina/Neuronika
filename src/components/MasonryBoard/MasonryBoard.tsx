@@ -11,33 +11,57 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function MasonryBoard() {
   const notes = useNoteStore((state) => state.notes);
+  const searchResults = useNoteStore((state) => state.searchResults);
   const [isAnyCardEditing, setIsAnyCardEditing] = useState(false);
-  const [layoutVersion, setLayoutVersion] = useState(0);
 
-  // Calculate layouts only when layoutVersion changes
+  const displayedNotes = searchResults ?? notes;
+
+  // Calculate layouts based on content size
   const layouts = useMemo(() => {
-    const relativeSizes = calculateRelativeSizes(notes);
+    // Calculate relative sizes for each note
+    const relativeSizes = calculateRelativeSizes(displayedNotes);
+
+    // Use rearrangeLayout to optimize the positioning
+    const optimizedLayout = rearrangeLayout(displayedNotes, relativeSizes);
+
+    // Create layouts for different breakpoints with simplified constraints
     return {
-      lg: rearrangeLayout(notes, relativeSizes),
-      md: rearrangeLayout(notes, relativeSizes),
-      sm: rearrangeLayout(notes, relativeSizes),
-      xs: rearrangeLayout(notes, relativeSizes),
-      xxs: rearrangeLayout(notes, relativeSizes),
+      lg: optimizedLayout.map(item => ({
+        ...item,
+        minW: 2,
+        maxW: 8,
+        minH: 2,
+        maxH: 8
+      })),
+      md: optimizedLayout.map(item => ({
+        ...item,
+        minW: 2,
+        maxW: 8,
+        minH: 2,
+        maxH: 8,
+        w: Math.min(item.w, 6),
+        x: Math.min(item.x, 5)
+      })),
+      sm: optimizedLayout.map(item => ({
+        ...item,
+        minW: 2,
+        maxW: 8,
+        minH: 2,
+        maxH: 8,
+        w: Math.min(item.w, 4),
+        x: Math.min(item.x, 3)
+      })),
+      xs: optimizedLayout.map(item => ({
+        ...item,
+        minW: 2,
+        maxW: 8,
+        minH: 2,
+        maxH: 8,
+        w: Math.min(item.w, 2),
+        x: Math.min(item.x, 1)
+      }))
     };
-  }, [layoutVersion]); // Remove notes dependency, only depend on layoutVersion
-
-  // Add keyboard event handler
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.code === 'Space' && !isAnyCardEditing) {
-        event.preventDefault(); // Prevent page scroll
-        setLayoutVersion(v => v + 1); // Increment to trigger recalculation
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isAnyCardEditing]);
+  }, [displayedNotes]);
 
   const handleEditStateChange = (isEditing: boolean) => {
     setIsAnyCardEditing(isEditing);
@@ -58,7 +82,7 @@ export default function MasonryBoard() {
         resizeHandles={['se', 'sw', 'ne', 'nw', 'n', 's', 'e', 'w']}
         useCSSTransforms={true}
       >
-        {notes.map((note) => (
+        {displayedNotes.map((note) => (
           <div key={note.id}>
             <NoteCard
               id={note.id}
