@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { debugNotes } from './debubNotes';
-import { calculateRelativeSizes } from '../MathUtils/autoResizing';
 
 export interface Note {
   id: string;
