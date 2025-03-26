@@ -5,7 +5,7 @@ import { calculateRelativeSizes } from '../../MathUtils/autoResizing';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { rearrangeLayout } from '../../MathUtils/rearrange';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
