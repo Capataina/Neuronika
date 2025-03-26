@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNoteStore } from "../../store/NoteStore";
 import { TagBadge } from "./TagBadge";
 import remarkGfm from 'remark-gfm';
+import { Badge } from "@/components/ui/badge";
 
 interface NoteCardProps {
   id: string;
@@ -216,7 +217,7 @@ export default function NoteCard({ id, title, content, tags = [], onEditStateCha
 
             {/* Tags section */}
             <div
-              className="tag-section flex flex-wrap mt-2 pt-2 border-t border-border flex-shrink-0 group"
+              className="tag-section flex flex-wrap gap-1 mt-2 pt-2 border-t border-border group"
               onMouseDown={(e) => e.stopPropagation()}
             >
               {tags.map((tag) => (
@@ -242,21 +243,22 @@ export default function NoteCard({ id, title, content, tags = [], onEditStateCha
                   }}
                   onClick={(e) => e.stopPropagation()}
                   onMouseDown={(e) => e.stopPropagation()}
-                  className="bg-transparent border-none text-sm focus:outline-none mr-2 mb-1"
+                  className="bg-transparent border-none text-xs focus:outline-none w-20"
                   placeholder="Enter tag..."
                   autoFocus
                 />
               ) : (
-                <button
+                <Badge
+                  variant="outline"
+                  className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsAddingTag(true);
                   }}
                   onMouseDown={(e) => e.stopPropagation()}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-muted-foreground hover:text-foreground mr-2 mb-1"
                 >
                   + Add tag
-                </button>
+                </Badge>
               )}
             </div>
           </div>
