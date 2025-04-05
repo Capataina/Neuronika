@@ -6,6 +6,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { rearrangeLayout } from '../../MathUtils/rearrange';
 import { useState, useMemo } from 'react';
+import { useDebugTagCounts } from '../../MathUtils/AllTags';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -13,6 +14,9 @@ export default function MasonryBoard() {
   const notes = useNoteStore((state) => state.notes);
   const searchResults = useNoteStore((state) => state.searchResults);
   const [isAnyCardEditing, setIsAnyCardEditing] = useState(false);
+
+  // Add debug hook
+  useDebugTagCounts();
 
   const displayedNotes = searchResults ?? notes;
 
@@ -39,8 +43,6 @@ export default function MasonryBoard() {
         maxW: 8,
         minH: 2,
         maxH: 8,
-        w: Math.min(item.w, 6),
-        x: Math.min(item.x, 5)
       })),
       sm: optimizedLayout.map(item => ({
         ...item,
@@ -73,7 +75,7 @@ export default function MasonryBoard() {
         className="layout"
         layouts={layouts}
         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-        cols={{ lg: 8, md: 6, sm: 4, xs: 2, xxs: 1 }}
+        cols={{ lg: 8, md: 8, sm: 4, xs: 2, xxs: 1 }}
         rowHeight={100}
         margin={[16, 16]}
         containerPadding={[0, 0]}

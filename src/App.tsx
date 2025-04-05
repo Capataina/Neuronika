@@ -1,6 +1,7 @@
 import './App.css'
 import MenuBar from './components/MenuBar/MenuBar'
 import MasonryBoard from './components/MasonryBoard/MasonryBoard'
+import DynamicFolders from './components/DynamicFolders/DynamicFolders'
 import { ThemeProvider } from "./components/ThemeProvider"
 import { useViewStore } from './store/ViewStore'
 
@@ -12,7 +13,7 @@ function App() {
       case 'masonry':
         return <MasonryBoard />
       case 'folders':
-        return <div>Folder View Coming Soon</div> // Placeholder
+        return <DynamicFolders />
       case 'graph':
         return <div>Graph View Coming Soon</div> // Placeholder
       default:
