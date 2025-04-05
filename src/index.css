@@ -549,3 +549,17 @@ button:focus-visible {
   outline: none;
   box-shadow: none;
 }
+
+/* Interactive Graph Styles */
+.board-container {
+  @apply w-full h-full overflow-hidden;
+}
+
+.board-container > div {
+  @apply w-full h-full;
+}
+
+/* Ensure the graph container takes full space */
+#graph-container {
+  @apply w-full h-full;
+}

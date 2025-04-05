@@ -2,6 +2,7 @@ import './App.css'
 import MenuBar from './components/MenuBar/MenuBar'
 import MasonryBoard from './components/MasonryBoard/MasonryBoard'
 import DynamicFolders from './components/DynamicFolders/DynamicFolders'
+import InteractiveGraph from './components/InteractiveGraph/InteractiveGraph'
 import { ThemeProvider } from "./components/ThemeProvider"
 import { useViewStore } from './store/ViewStore'
 
@@ -15,7 +16,7 @@ function App() {
       case 'folders':
         return <DynamicFolders />
       case 'graph':
-        return <div>Graph View Coming Soon</div> // Placeholder
+        return <InteractiveGraph />
       default:
         return <MasonryBoard />
     }

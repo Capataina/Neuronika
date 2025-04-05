@@ -16,12 +16,12 @@ export function rearrangeLayout(notes: Note[], relativeSizes: { width: number; h
   // Create a copy of notes and sizes to work with
   const noteItems = notes.map((note, index) => ({
     note,
-    width: relativeSizes[index].width,
-    height: relativeSizes[index].height,
+    width: Math.max(2, relativeSizes[index].width), // Ensure minimum width of 2
+    height: Math.max(2, relativeSizes[index].height), // Ensure minimum height of 2
   }));
 
   const maxCols = 8;
-  const maxRows = 50; // Upper limit to prevent infinite recursion
+  const maxRows = 120; // Upper limit to prevent infinite recursion
 
   // Create grid to track occupied cells
   const grid: boolean[][] = Array(maxRows).fill(0).map(() => Array(maxCols).fill(false));
@@ -33,10 +33,57 @@ export function rearrangeLayout(notes: Note[], relativeSizes: { width: number; h
   const layout: LayoutItem[] = [];
 
   // Start the recursive placement from top-left
-  placeNotesWithBacktracking(grid, 0, 0, noteItems, usedNotes, layout, maxCols, maxRows);
+  let success = placeNotesWithBacktracking(grid, 0, 0, noteItems, usedNotes, layout, maxCols, maxRows);
+
+  // If placement failed, use fallback strategy
+  if (!success) {
+    // Clear everything
+    layout.length = 0;
+    grid.forEach(row => row.fill(false));
+    usedNotes.fill(false);
+
+    // Simple left-to-right, top-to-bottom placement
+    let currentRow = 0;
+    let currentCol = 0;
+
+    noteItems.forEach((item) => {
+      // If we can't fit in current row, move to next row
+      if (currentCol + item.width > maxCols) {
+        currentCol = 0;
+        currentRow = findNextEmptyRow(grid, currentRow, maxCols);
+      }
+
+      // Add to layout
+      layout.push({
+        i: item.note.id,
+        x: currentCol,
+        y: currentRow,
+        w: item.width,
+        h: item.height,
+        minW: 2,
+        maxW: 8,
+        minH: Math.max(2, Math.floor(item.height / 2)),
+        maxH: Math.min(8, Math.ceil(item.height * 1.5))
+      });
+
+      // Mark grid as occupied
+      markGridOccupied(grid, currentRow, currentCol, item.width, item.height, true);
+
+      // Move to next position
+      currentCol += item.width;
+    });
+  }
 
   // Sort by position for cleaner display
   layout.sort((a, b) => a.y - b.y || a.x - b.x);
+
+  // Final validation to ensure no invalid sizes
+  layout.forEach(item => {
+    item.w = Math.max(2, item.w);
+    item.h = Math.max(2, item.h);
+    item.minW = Math.max(2, item.minW);
+    item.minH = Math.max(2, item.minH);
+  });
 
   return layout;
 }

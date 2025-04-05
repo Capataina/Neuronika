@@ -19,9 +19,29 @@ interface NoteStore {
 }
 
 const calculateContentSize = (content: string): number => {
-  // Basic calculation based on content length
-  const baseSize = Math.ceil(content.length / 100); // One size unit per 100 characters
-  return Math.max(2, Math.min(4, baseSize)); // Keep between 2 and 4
+  // Calculate a more nuanced content size based on multiple factors
+  let size = 0;
+
+  // Factor 1: Raw content length (characters)
+  size += content.length * 0.01;
+
+  // Factor 2: Number of paragraphs (more paragraphs = more complex content)
+  const paragraphs = content.split('\n\n').length;
+  size += paragraphs * 0.5;
+
+  // Factor 3: Number of markdown elements (headers, lists, code blocks, etc.)
+  const markdownElements = (content.match(/#{1,6}\s|`{1,3}|\*\s|-\s|\d\.\s|\*\*|__/g) || []).length;
+  size += markdownElements * 0.3;
+
+  // Factor 4: Word count (better measure than pure character count)
+  const words = content.split(/\s+/).length;
+  size += words * 0.05;
+
+  // Normalize to a value between 2 and 8
+  // This gives us more granular values for the relative sizing to work with
+  const normalized = 2 + (6 * (Math.min(size, 100) / 100));
+
+  return normalized;
 };
 
 export const useNoteStore = create<NoteStore>((set) => ({
